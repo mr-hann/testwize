@@ -1,0 +1,8 @@
+{
+  "/teacher/profile/page": "app/teacher/profile/page.js",
+  "/teacher/results/page": "app/teacher/results/page.js",
+  "/teacher/question-banks/page": "app/teacher/question-banks/page.js",
+  "/teacher/create-test/page": "app/teacher/create-test/page.js",
+  "/teacher/dashboard/page": "app/teacher/dashboard/page.js",
+  "/teacher/analytics/page": "app/teacher/analytics/page.js"
+}
