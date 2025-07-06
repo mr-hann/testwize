@@ -23,7 +23,30 @@ This is a teacher-focused test management platform built with **Next.js**, **Typ
 - **LocalStorage** for session persistence
 
 ## Project Structure
+## jason (mock)database
 
+✅ tests
+
+Metadata about each test
+
+Includes title, description, status, timeLimit, createdAt, and number of responses.
+
+✅ testResults
+
+Tracks aggregated student results for a test
+
+Includes testId to relate to tests
+
+Stores totalStudents, completed (passed), and averageScore.
+
+✅ testData
+
+Stores the actual question bank per test
+
+Contains an array of questions tied to the testId
+
+Each question supports multiple-choice, true/false, or short-answer types.
+the data is just for test no original information there
 
 ## Getting Started
 
