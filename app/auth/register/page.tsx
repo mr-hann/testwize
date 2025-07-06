@@ -12,6 +12,7 @@ import { ArrowLeft, CheckCircle } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import Image from "next/image"
+import { createUser } from "@/api/api"
 
 export default function RegisterPage() {
   const [formData, setFormData] = useState({
@@ -44,22 +45,23 @@ export default function RegisterPage() {
       return
     }
 
-    try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1500))
-
-      // Store user data in localStorage (in real app, this would be handled by backend)
+     try {
+      // create user data
       const userData = {
-        id: Date.now().toString(),
         fullName: formData.fullName,
         email: formData.email,
+        password: formData.password,
         schoolName: formData.schoolName,
         role: "teacher",
-        plan: "free", // Start with free plan
+        plan: "free",
         testsCreated: 0,
         createdAt: new Date().toISOString(),
       }
 
+      // save to JSON server
+      await createUser(userData)
+
+      // local storage
       localStorage.setItem("currentUser", JSON.stringify(userData))
       localStorage.setItem("isAuthenticated", "true")
 

@@ -1,8 +1,8 @@
 {
-  "/teacher/profile/page": "app/teacher/profile/page.js",
-  "/teacher/results/page": "app/teacher/results/page.js",
-  "/teacher/question-banks/page": "app/teacher/question-banks/page.js",
-  "/teacher/create-test/page": "app/teacher/create-test/page.js",
+  "/_not-found/page": "app/_not-found/page.js",
+  "/page": "app/page.js",
+  "/auth/login/page": "app/auth/login/page.js",
   "/teacher/dashboard/page": "app/teacher/dashboard/page.js",
-  "/teacher/analytics/page": "app/teacher/analytics/page.js"
+  "/test/[id]/page": "app/test/[id]/page.js",
+  "/teacher/create-test/page": "app/teacher/create-test/page.js"
 }

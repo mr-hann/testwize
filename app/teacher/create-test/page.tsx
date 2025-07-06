@@ -106,7 +106,7 @@ const [input, setInput] = useState("")
       ...prev,
       questions: [...prev.questions, newQuestion],
     }))
-//data collected in this file
+    //data collected in this file
     setCurrentQuestion({
       type: "multiple-choice",
       question: "",
@@ -159,23 +159,51 @@ const [input, setInput] = useState("")
     }
   }
 
-  const saveTest = (status: "draft" | "published") => {
-    if (!testData.title.trim()) {
-      toast({
-        title: "Error",
-        description: "Please enter a test title",
-        variant: "destructive",
-      })
-      return
+const saveTest = async (status: "draft" | "published") => {
+  if (!testData.title.trim()) {
+    toast({
+      title: "Error",
+      description: "Please enter a test title",
+      variant: "destructive",
+    })
+    return
+  }
+
+  if (testData.questions.length === 0) {
+    toast({
+      title: "Error",
+      description: "Please add at least one question",
+      variant: "destructive",
+    })
+    return
+  }
+
+  try {
+    const newTest = {
+      id: Date.now().toString(),
+      title: testData.title,
+      description: testData.description,
+      subject: testData.subject,
+      timeLimit: testData.duration,
+      instructions: testData.instructions,
+      status: status, // "draft" or "published"
+      questions: testData.questions,
+      createdAt: new Date().toISOString(),
+      responses: 0,
+      shareLink: status =="draft" ? "" : `/test/${Date.now()}`,
+    
     }
 
-    if (testData.questions.length === 0) {
-      toast({
-        title: "Error",
-        description: "Please add at least one question",
-        variant: "destructive",
-      })
-      return
+    const response = await fetch("http://localhost:4000/tests", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(newTest),
+    })
+
+    if (!response.ok) {
+      throw new Error("Failed to save test")
     }
 
     toast({
@@ -186,7 +214,17 @@ const [input, setInput] = useState("")
     setTimeout(() => {
       router.push("/teacher/dashboard")
     }, 1000)
+
+  } catch (err) {
+    console.error(err)
+    toast({
+      variant: "destructive",
+      title: "Error",
+      description: "Could not save test, please try again.",
+    })
   }
+}
+
 
   if (!isAuthenticated) {
     return (
@@ -312,8 +350,13 @@ const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
                       <SelectContent>
                         <SelectItem value="mathematics">Mathematics</SelectItem>
                         <SelectItem value="english">English</SelectItem>
-                        <SelectItem value="science">Science</SelectItem>
+                        <SelectItem value="Basic Technology">Basic Technology</SelectItem>
                         <SelectItem value="history">History</SelectItem>
+                        <SelectItem value="Boilogy">Boilogy</SelectItem>
+                        <SelectItem value="chemistry">chemistry</SelectItem>
+                        <SelectItem value="Physics">Physics</SelectItem>
+                        <SelectItem value="Economise">Economise</SelectItem>
+                        <SelectItem value="basic science">Basic science</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>

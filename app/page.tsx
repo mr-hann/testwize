@@ -108,6 +108,7 @@ export default function HomePage() {
         "File upload & auto-extraction",
         "Export student results",
         "Priority support",
+        "AI teacher asistant",
         "Mobile-optimized tests",
       ],
       limitations: [],

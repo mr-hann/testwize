@@ -9,20 +9,17 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useToast } from "@/hooks/use-toast"
 import DashboardLayout from "@/components/dashboard-layout"
-import { demoTests,Test} from "@/data/demo-test"
 
 
 export default function TeacherDashboard() {
   const [user, setUser] = useState<any>(null)
   const [testsState, setTestsState] = useState<Test[]>([])
   const [deletingTestId, setDeletingTestId] = useState<string | null>(null)
+  const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
   const { toast } = useToast()
-  
-
 
   useEffect(() => {
-    // Check authentication
     const isAuthenticated = localStorage.getItem("isAuthenticated")
     const currentUser = localStorage.getItem("currentUser")
 
@@ -33,16 +30,52 @@ export default function TeacherDashboard() {
 
     setUser(JSON.parse(currentUser))
 
-setTestsState(
-  demoTests.map((test) => ({
+    // fetch from json-server
+    const fetchTests = async () => {
+      setIsLoading(true)
+      try {
+       const [testsRes, resultsRes, dataRes] = await Promise.all([
+        fetch("http://localhost:4000/tests"),
+        fetch("http://localhost:4000/testResults"),
+        fetch("http://localhost:4000/testData")
+      ])
+       if (!testsRes.ok || !resultsRes.ok || !dataRes.ok) throw new Error("Could not load tests")
+
+      const [tests, results, data] = await Promise.all([
+        testsRes.json(),
+        resultsRes.json(),
+        dataRes.json()
+      ])
+        
+      // merge results into tests
+    const merged = tests.map(test => {
+  const result = results.find(r => r.testId === test.id)
+  const dataItem = data.find(q => q.testId === test.id)
+  return {
     ...test,
-    shareLink: `${window.location.origin}${test.shareLink}`,
-  }))
-)
+    shareLink: `${window.location.origin}/test/${test.id}`,
+    totalStudents: result?.totalStudents || 0,
+    averageScore: result?.averageScore || 0,
+    completed: result?.completed || 0,
+    questionBank: dataItem?.questions || []
+  }
+})
 
+      setTestsState(merged)
+      } catch (err) {
+        console.error(err)
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "Could not load tests from server.",
+        })
+      } finally {
+        setIsLoading(false)
+      }
+    }
 
-    setTestsState(demoTests)
-  }, [router])
+    fetchTests()
+  }, [router, toast])
 
   const copyShareLink = async (shareLink: string) => {
     try {
@@ -51,7 +84,7 @@ setTestsState(
         title: "Success!",
         description: "Share link copied to clipboard",
       })
-    } catch (error) {
+    } catch {
       toast({
         variant: "destructive",
         title: "Error",
@@ -73,21 +106,22 @@ setTestsState(
     }
   }
 
- const handleDeleteTest = async (testId: string, testTitle: string) => {
+  const handleDeleteTest = async (testId: string, testTitle: string) => {
     if (confirm(`Are you sure you want to delete "${testTitle}"? This action cannot be undone.`)) {
       setDeletingTestId(testId)
-
       try {
-        // Simulate API call
-        await new Promise((resolve) => setTimeout(resolve, 1500))
-
-        setTestsState((prevTests) => prevTests.filter((test) => test.id !== testId))
-
+       await Promise.all([
+        fetch(`http://localhost:4000/tests/${testId}`, { method: "DELETE" }),
+        fetch(`http://localhost:4000/testResults/${testId}`, { method: "DELETE" }),
+        fetch(`http://localhost:4000/testData/${testId}`, { method: "DELETE" }),
+      ])
+     
+        setTestsState((prev) =>prev.filter((test) => test.id !== testId))
         toast({
           title: "Test Deleted",
           description: `"${testTitle}" has been successfully deleted.`,
         })
-      } catch (error) {
+      } catch {
         toast({
           variant: "destructive",
           title: "Error",
@@ -98,8 +132,26 @@ setTestsState(
       }
     }
   }
+  // avarage score 
+  const averageScore =
+  testsState.length > 0
+    ? (
+        testsState.reduce((sum, test) => sum + (test.averageScore || 0), 0) /
+        testsState.length
+      ).toFixed(1)
+    : 0
+console.log(testsState)
+    // calculate pass rate
+const totalStudents = testsState.reduce((sum, test) => sum + (test.totalStudents || 0), 0);
+const totalPassed = testsState.reduce(
+  (sum, test) => sum + (test.completed || 0), // assuming "completed" = passed
+  0
+);
 
-  if (!user) {
+const passRate = totalStudents > 0 ? ((totalPassed / totalStudents) * 100).toFixed(1) : 0;
+
+
+  if (!user || isLoading) {
     return (
       <DashboardLayout>
         <div className="min-h-screen flex items-center justify-center">
@@ -112,7 +164,7 @@ setTestsState(
   return (
     <DashboardLayout>
       <div className="p-4 md:p-6 pb-20 lg:pb-6">
-        {/* Welcome Section */}
+        {/* Welcome */}
         <div className="mb-6 md:mb-8">
           <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">Welcome back, {user.fullName}!</h1>
           <p className="text-sm md:text-base text-gray-600">
@@ -120,10 +172,10 @@ setTestsState(
           </p>
         </div>
 
-        {/* Quick Stats */}
+        {/* Stats */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-6 md:mb-8">
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-xs md:text-sm font-medium">Total Tests</CardTitle>
               <FileText className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
@@ -135,36 +187,34 @@ setTestsState(
             </CardContent>
           </Card>
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-xs md:text-sm font-medium">Total Responses</CardTitle>
               <Users className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-xl md:text-2xl font-bold">
-                {testsState.reduce((sum, test) => sum + test.responses, 0)}
+                {testsState.reduce((sum, test) => sum + (test.responses || 0), 0)}
               </div>
               <p className="text-xs text-muted-foreground">Across all tests</p>
             </CardContent>
           </Card>
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-xs md:text-sm font-medium">Average Score</CardTitle>
               <BarChart3 className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              {/* the data here has to be generated*/}
-              <div className="text-xl md:text-2xl font-bold">78%</div>
+              <div className="text-xl md:text-2xl font-bold">{averageScore}%</div>
               <p className="text-xs text-muted-foreground">+2% from last week</p>
             </CardContent>
           </Card>
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-xs md:text-sm font-medium">Pass Rate</CardTitle>
               <BarChart3 className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-                 {/* the data here has to be generated*/}
-              <div className="text-xl md:text-2xl font-bold">85%</div>
+              <div className="text-xl md:text-2xl font-bold">{passRate}%</div>
               <p className="text-xs text-muted-foreground">+5% from last week</p>
             </CardContent>
           </Card>
@@ -186,11 +236,11 @@ setTestsState(
           </Link>
         </div>
 
-        {/* Tests List */}
+        {/* Tests list */}
         <Card>
           <CardHeader>
             <CardTitle className="text-lg md:text-xl">Your Tests</CardTitle>
-            <CardDescription className="text-sm md:text-base">Manage and monitor your created tests</CardDescription>
+            <CardDescription>Manage and monitor your created tests</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
@@ -204,9 +254,9 @@ setTestsState(
                       <h3 className="font-semibold text-base md:text-lg">{test.title}</h3>
                       <Badge className={getStatusColor(test.status)}>{test.status}</Badge>
                     </div>
-                    <p className="text-sm md:text-base text-gray-600 mb-2">{test.description}</p>
-                    <div className="flex flex-wrap items-center gap-2 md:gap-4 text-xs md:text-sm text-gray-500">
-                      <span>{test.questions} questions</span>
+                    <p className="text-sm text-gray-600 mb-2">{test.description}</p>
+                    <div className="flex flex-wrap items-center gap-2 text-xs text-gray-500">
+                     <span>{test.questionBank.length} questions</span>
                       <span>{test.timeLimit} minutes</span>
                       <span>{test.responses} responses</span>
                       <span>Created {test.createdAt}</span>
@@ -223,13 +273,13 @@ setTestsState(
                       Share
                     </Button>
                     <Link href={`/teacher/test/${test.id}/results`}>
-                      <Button variant="outline" size="sm" className="text-xs bg-transparent">
+                      <Button variant="outline" size="sm" className="text-xs">
                         <Eye className="w-3 h-3 mr-1" />
                         Results
                       </Button>
                     </Link>
                     <Link href={`/teacher/test/${test.id}/edit`}>
-                      <Button variant="outline" size="sm" className="text-xs bg-transparent">
+                      <Button variant="outline" size="sm" className="text-xs">
                         <Edit className="w-3 h-3 mr-1" />
                         Edit
                       </Button>

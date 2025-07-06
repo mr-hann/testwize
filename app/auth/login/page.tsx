@@ -12,9 +12,10 @@ import { ArrowLeft } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import Image from "next/image"
+import { loginUser } from "@/api/api"
 
 export default function LoginPage() {
-  const [formData, setFormData] = useState({
+ const [formData, setFormData] = useState({
     email: "",
     password: "",
   })
@@ -28,26 +29,16 @@ export default function LoginPage() {
     setIsLoading(true)
 
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000))
+      const userData = await loginUser(formData.email, formData.password)
 
-      // For demo purposes, accept any email/password combination
-      // In real app, this would validate against backend
-      const userData = {
-        id: "demo-teacher-1",
-        fullName: "Demo Teacher",
-        email: formData.email,
-        schoolName: "Demo School",
-        role: "teacher",
-        createdAt: new Date().toISOString(),
-      }
-
+      // store locally for session
       localStorage.setItem("currentUser", JSON.stringify(userData))
       localStorage.setItem("isAuthenticated", "true")
 
       router.push("/teacher/dashboard")
-    } catch (err) {
-      setError("Invalid email or password. Please try again.")
+    } catch (err: any) {
+      console.error(err)
+      setError(err.message || "Login failed. Please try again.")
     } finally {
       setIsLoading(false)
     }

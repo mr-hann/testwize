@@ -1,0 +1,250 @@
+{
+  "users": [
+    {
+      "id": "fa0b",
+      "fullName": "johanna",
+      "email": "iwarastevejohanna@gmail.com",
+      "password": "location47",
+      "schoolName": "senma",
+      "role": "teacher",
+      "plan": "free",
+      "testsCreated": 0,
+      "createdAt": "2025-07-06T00:28:40.116Z"
+    }
+  ],
+
+  "testResults": [
+    {
+      "id": "1",
+      "title": "Mathematics Quiz - Algebra",
+      "subject": "Mathematics",
+      "totalStudents": 32,
+      "completed": 28,
+      "averageScore": 83.2,
+      "createdAt": "2024-01-15",
+      "status": "completed"
+    },
+    {
+      "id": "2",
+      "title": "Physics - Motion & Forces",
+      "subject": "Physics",
+      "totalStudents": 25,
+      "completed": 25,
+      "averageScore": 78.5,
+      "createdAt": "2024-01-10",
+      "status": "completed"
+    },
+    {
+      "id": "3",
+      "title": "English Literature Quiz",
+      "subject": "English",
+      "totalStudents": 30,
+      "completed": 15,
+      "averageScore": 85,
+      "createdAt": "2024-01-20",
+      "status": "active"
+    }
+  ],
+
+  "tests": [
+    {
+      "id": "1",
+      "title": "Mathematics Quiz - Algebra",
+      "description": "Basic algebra concepts for Grade 10",
+      "questions": 20,
+      "timeLimit": 45,
+      "status": "active",
+      "responses": 24,
+      "createdAt": "2024-01-15",
+      "shareLink": "/test/math-algebra-001"
+    },
+    {
+      "id": "2",
+      "title": "Science Test - Physics",
+      "description": "Motion and forces chapter test",
+      "questions": 15,
+      "timeLimit": 30,
+      "status": "inactive",
+      "responses": 0,
+      "createdAt": "2024-01-10",
+      "shareLink": "/test/physics-motion-002"
+    }
+  ],
+
+  "testData": [
+    {
+      "id": "1",
+      "title": "Mathematics Quiz - Algebra",
+      "description": "Basic algebra concepts and problem solving",
+      "subject": "mathematics",
+      "duration": 30,
+      "instructions": "Answer all questions to the best of your ability. You have 30 minutes to complete this test.",
+      "status": "draft",
+      "questions": [
+        {
+          "id": "1",
+          "type": "multiple-choice",
+          "question": "What is the value of x in the equation 2x + 5 = 15?",
+          "options": [
+            "3",
+            "5",
+            "7",
+            "10"
+          ],
+          "correctAnswer": 1,
+          "points": 2
+        },
+        {
+          "id": "2",
+          "type": "true-false",
+          "question": "The equation y = mx + b represents a linear function.",
+          "correctAnswer": true,
+          "points": 1
+        }
+      ]
+    }
+  ],
+
+  
+  "studentResults": [
+    {
+      "studentId": "s1",
+      "studentName": "John Doe",
+      "email": "john.doe@student.edu",
+      "score": 75,
+      "totalQuestions": 10,
+      "correctAnswers": 7,
+      "timeSpent": 45,
+      "submittedAt": "2024-01-15T10:30:00Z",
+      "answers": [
+        {
+          "id": "1",
+          "question": "What is 2x + 3 = 11? Solve for x.",
+          "type": "multiple-choice",
+          "options": [
+            "x = 2",
+            "x = 4",
+            "x = 6",
+            "x = 8"
+          ],
+          "correctAnswer": "x = 4",
+          "studentAnswer": "x = 4",
+          "isCorrect": true,
+          "timeSpent": 3
+        },
+        {
+          "id": "2",
+          "question": "Is the equation 3x - 6 = 0 equivalent to x = 2?",
+          "type": "true-false",
+          "correctAnswer": "True",
+          "studentAnswer": "True",
+          "isCorrect": true,
+          "timeSpent": 2
+        },
+        {
+          "id": "3",
+          "question": "Simplify: 4x + 2x - 3x",
+          "type": "short-answer",
+          "correctAnswer": "3x",
+          "studentAnswer": "3x",
+          "isCorrect": true,
+          "timeSpent": 4
+        },
+        {
+          "id": "4",
+          "question": "What is the slope of the line y = 2x + 5?",
+          "type": "multiple-choice",
+          "options": [
+            "1",
+            "2",
+            "5",
+            "-5"
+          ],
+          "correctAnswer": "2",
+          "studentAnswer": "5",
+          "isCorrect": false,
+          "timeSpent": 6
+        },
+        {
+          "id": "5",
+          "question": "Solve: 5x - 10 = 15",
+          "type": "short-answer",
+          "correctAnswer": "x = 5",
+          "studentAnswer": "x = 4",
+          "isCorrect": false,
+          "timeSpent": 8
+        }
+      ],
+      "id": "84dc"
+    }
+  ],
+
+  "mockTestResults": [
+    {
+      "id": "1",
+      "title": "Mathematics Quiz - Algebra",
+      "subject": "Mathematics",
+      "totalQuestions": 15,
+      "totalPoints": 20,
+      "duration": 30,
+      "createdAt": "2024-01-15",
+      "students": [
+        {
+          "id": "1",
+          "name": "Alice Johnson",
+          "email": "alice@school.edu",
+          "score": 85,
+          "totalQuestions": 15,
+          "correctAnswers": 13,
+          "timeSpent": 25,
+          "completedAt": "2024-01-16T10:30:00Z",
+          "status": "completed"
+        },
+        {
+          "id": "2",
+          "name": "Bob Smith",
+          "email": "bob@school.edu",
+          "score": 92,
+          "totalQuestions": 15,
+          "correctAnswers": 14,
+          "timeSpent": 28,
+          "completedAt": "2024-01-16T11:15:00Z",
+          "status": "completed"
+        },
+        {
+          "id": "3",
+          "name": "Carol Davis",
+          "email": "carol@school.edu",
+          "score": 78,
+          "totalQuestions": 15,
+          "correctAnswers": 12,
+          "timeSpent": 30,
+          "completedAt": "2024-01-16T09:45:00Z",
+          "status": "completed"
+        },
+        {
+          "id": "4",
+          "name": "David Wilson",
+          "email": "david@school.edu",
+          "score": 88,
+          "totalQuestions": 15,
+          "correctAnswers": 13,
+          "timeSpent": 22,
+          "completedAt": "2024-01-16T14:20:00Z",
+          "status": "completed"
+        },
+        {
+          "id": "5",
+          "name": "Eva Brown",
+          "email": "eva@school.edu",
+          "score": 0,
+          "totalQuestions": 15,
+          "correctAnswers": 0,
+          "timeSpent": 0,
+          "completedAt": "",
+          "status": "not-started"
+        }
+      ]
+    }
+  ]
+}
